@@ -1,6 +1,6 @@
 <h2 class="text-2xl text-center font-bold text-black mb-3">Tranding News</h2>
 
-<ng-container *ngFor="let item of news; let i = index">
+<ng-container *ngFor="let item of news; ">
     <div 
     class="flex flex-row gap-1 items-center overflow-hidden py-2"
     (click)="getPost(item.type, item.slug, item)"

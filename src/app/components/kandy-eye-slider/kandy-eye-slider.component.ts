@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class KandyEyeSliderComponent implements OnInit, OnDestroy {
   // }));
   
 
-  constructor(private articleService: ArticleService) {}
+  constructor(private articleService: ArticleService , private router: Router) {}
   cards: any[] = []; // no dummy data
 
   uniqueCategories: string[] = [];  // Store the unique categories
@@ -84,6 +84,24 @@ export class KandyEyeSliderComponent implements OnInit, OnDestroy {
     });
   }
   
+  getPost(type: string, slug: string, article: any) {
+    // Clear the previously selected article from localStorage
+    localStorage.removeItem('selectedArticle');
+  
+    this.articleService.getsinglepost(type, slug).subscribe(result => {
+      this.articleService.setSelectedArticle(article);
+      localStorage.setItem('selectedArticle', JSON.stringify(article)); // Save the new article to localStorage
+  
+      // Navigate based on type, pass real values, not param names
+      if (type === 'video') {
+        this.router.navigate(['video-news', type, slug]);
+      } else if (type === 'news') {
+        this.router.navigate(['article', type, slug]);
+      }
+  
+      console.log(result);
+    });
+  }
   
   startAutoSlide() {
     this.autoSlideInterval = setInterval(() => {

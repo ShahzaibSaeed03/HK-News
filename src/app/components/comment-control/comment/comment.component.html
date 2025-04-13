@@ -1,34 +1,51 @@
-<section class="bg-gray-50  py-8 lg:py-16 antialiased">
-    <div class="max-w-2xl mx-auto px-4">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg lg:text-2xl font-bold text-black ">Discussion ({{comments.length}})</h2>
-      </div>
-     <app-write-comment></app-write-comment>
-      
-     <article *ngFor="let comment of comments" class="p-6 text-base bg-white shadow rounded-lg mb-2">
-        <footer class="flex justify-between items-center mb-2">
-          <div class="flex items-center">
-            <p class="inline-flex items-center mr-3 text-sm text-black font-semibold">
-              <img class="mr-2 w-6 h-6 rounded-full" 
-                   src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
-                   alt="User">
-              {{ getParsedUser(comment.data)?.username || 'Guest User' }}
-            </p>
-            <p class="text-sm text-gray-600">
-              <time>{{ comment.created_at | date:'mediumDate' }}</time>
-            </p>
-          </div>
-        </footer>
-      
-        <p class="text-gray-500">
-          {{ comment.comment }}
-        </p>
+<section class="bg-gray-50 py-8 lg:py-16 antialiased">
+  <div class="max-w-2xl mx-auto px-4">
 
-        
-      
-     
-      </article>
-      
-    
+    <!-- Heading -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg lg:text-2xl font-bold text-black">Discussion {{ comments.length }}</h2>
     </div>
-  </section>
+
+    <!-- Toggle Buttons -->
+    <div class="flex gap-2 mb-4">
+      <button
+        class="px-4 py-1 rounded-full border border-gray-300 text-sm bg-black font-medium text-white"
+      
+      >
+        Most Recent
+      </button>
+      <button
+        class="px-4 py-1 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100"
+   
+      >
+        Hottest
+      </button>
+    </div>
+
+    <!-- Write Comment Component -->
+    <app-write-comment></app-write-comment>
+
+    <!-- Comment List -->
+    <article
+      *ngFor="let comment of comments"
+      class="p-6 text-base bg-white shadow rounded-lg mb-2"
+    >
+      <footer class="flex justify-between items-center mb-2">
+        <div class="flex items-center">
+          <p class="inline-flex items-center mr-3 text-sm text-black font-semibold">
+            <img
+              class="mr-2 w-6 h-6 rounded-full"
+              src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
+              alt="User"
+            />
+            {{ getParsedUser(comment.data)?.username || 'Guest User' }}
+          </p>
+          <p class="text-sm text-gray-600">
+            <time>{{ comment.created_at | date: 'mediumDate' }}</time>
+          </p>
+        </div>
+      </footer>
+      <p class="text-gray-500">{{ comment.comment }}</p>
+    </article>
+  </div>
+</section>
