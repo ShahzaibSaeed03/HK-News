@@ -1,32 +1,32 @@
-<ng-container *ngFor="let item of news; let i = index">
-    <div 
-    class="flex flex-row gap-1 items-center overflow-hidden py-2"
-    (click)="getPost(item.type, item.slug, item)"
-  >
-    <img 
-      [src]="item.thumb" 
-      alt="Video Thumbnail" 
-      class="w-full h-28 object-cover rounded"
-    >
+<div class="px-0 my-10 md:px-28">
+  <p class="text-3xl font-bold text-center py-2">Entertainment News</p>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 mt-5 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-4 p-1 md:gap-x-8">
     
-    <div class="w-full h-28 sm:w-2/3 text-left font-semibold flex flex-col justify-between px-1">
-      <p class="text-black md:text-[12px] text-[16px] overflow-hidden font-semibold">
-        {{ item.title }}
-      </p>
-      
-      <div class="flex justify-between items-center text-sm font-normal">
-        <div>
-          <i class="fa-regular fa-eye"></i> {{item.popularity_stats.all_time_stats}}
-        </div>
-  
-        <div>
-          <i class="fa-regular fa-clock mr-1"></i> {{ item.relativeTime }}
+    <ng-container *ngFor="let item of news; let i = index">
+      <div class="flex flex-row sm:flex-col items-center bg-white overflow-hidden cursor-pointer"  (click)="getPost(item.type,item.slug , item)">
+        <img *ngIf="item.thumb" [src]="item.thumb" alt="News Image"
+ class="w-1/2 sm:w-full h-32 object-cover rounded" />
+        <div class="w-1/2 sm:w-full text-left font-semibold flex flex-col justify-between h-32 px-1">
+          <div class="flex justify-between items-center">
+            <div class="title line-clamp-4 overflow-hidden text-ellipsis h-24">
+              {{ item.title }}
+            </div>   
+          </div>
+          <div class="time flex justify-between items-center text-sm font-normal">
+            <div class="tag text-sm bg-blacks px-3 rounded-sm text-white ">{{ item.categories }}</div>
+            <div>{{ item.relativeTime }}</div> <!-- Display relative time -->
+
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  
-  
-    
 
-  </ng-container>
+      
+
+    </ng-container>
+    <div *ngIf="news.length === 0" class="text-center text-xl mt-10">
+      Coming Soon...
+    </div>
+    
+  </div>
+  </div>

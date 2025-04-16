@@ -5,6 +5,11 @@ import { LoginComponent } from './components/authentication/login/login.componen
 import { RegisterComponent } from './components/authentication/register/register.component';
 import { VideoNewsComponent } from './components/video-news/video-news.component';
 import { BusinessComponent } from './components/business/business.component';
+import { CelebirtyComponent } from './components/celebirty/celebirty.component';
+import { CrimeComponent } from './components/crime/crime.component';
+import { EntertainmentComponent } from './components/entertainment/entertainment.component';
+import { PoliticsComponent } from './components/politics/politics.component';
+
 
 export const routes: Routes = [
     {
@@ -30,7 +35,24 @@ export const routes: Routes = [
         component: RegisterComponent
     },
     {
-        path: 'business',
+        path: 'business-news',
         component: BusinessComponent
     },
+    {
+      path:'crime-news' ,
+      component:CrimeComponent
+    },
+    {
+        path:'politics-news' ,
+        component:PoliticsComponent
+      },
+      {
+        path:'entertainment-news' ,
+        component:EntertainmentComponent
+      },
+      {
+        path:'celebirty-news' ,
+        component:CelebirtyComponent
+      },
+
 ];

@@ -47,21 +47,24 @@ setSelectedArticle(article: any) {
         console.log('API Response:', response);
   
         if (response && Array.isArray(response.posts)) {
-          let formattedPosts = response.posts.map((post: any) => {
-            const updatedThumb = post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null;
-            return {
-              ...post,
-              thumb: updatedThumb,
-              relativeTime: this.getRelativeTime(post.spdate),
-              views: post.popularity_stats?.all_time_stats || 0 // fallback if null
-            };
+          // Filter posts to include only those with type 'business'
+          this.news = response.posts
+            .filter((post: any) => post.categories === 'Celebrity')
+            .map((post: any) => {
+              const updatedThumb = post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null;
+              return {
+                ...post,
+                thumb: updatedThumb,
+                relativeTime: this.getRelativeTime(post.spdate), // Add relative time to each post
+              };
+            });
+  
+          // Sort the news array by the spdate (latest date first)
+          this.news.sort((a, b) => {
+            const dateA = new Date(a.spdate).getTime();
+            const dateB = new Date(b.spdate).getTime();
+            return dateB - dateA; // Sort in descending order
           });
-  
-          // Sort by views descending
-          formattedPosts = formattedPosts.sort((a:any, b:any) => b.views - a.views);
-  
-          // Pick top 10 most viewed posts
-          this.news = formattedPosts.slice(0, 16);
         } else {
           console.error('Invalid API response format:', response);
           this.news = [];

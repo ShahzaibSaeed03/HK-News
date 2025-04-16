@@ -23,7 +23,8 @@ export class CommentComponent implements OnInit {
     this.commentService.getComments().subscribe(
       response => {
         console.log('Comments:', response);
-        this.comments = response ?? []; // assuming your API returns a data array
+        this.comments = response ?? [];
+
       },
       error => {
         console.error('Failed to fetch comments:', error);

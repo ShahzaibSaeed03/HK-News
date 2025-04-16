@@ -171,4 +171,46 @@ export class ArticleComponent implements OnInit {
       this.renderer.removeClass(document.body, 'blur-bg');
     }
   }
+
+
+  shareOn(platform: string) {
+    const url = encodeURIComponent(window.location.href);
+    let shareUrl = '';
+  
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${url}`;
+        break;
+      case 'telegram':
+        shareUrl = `https://t.me/share/url?url=${url}`;
+        break;
+      case 'reddit':
+        shareUrl = `https://www.reddit.com/submit?url=${url}`;
+        break;
+      case 'pinterest':
+        shareUrl = `https://pinterest.com/pin/create/button/?url=${url}`;
+        break;
+      case 'email':
+        shareUrl = `mailto:?subject=Check this out&body=${url}`;
+        break;
+      case 'text':
+        shareUrl = `sms:?body=${url}`;
+        break;
+      default:
+        alert('Sharing not supported for this platform.');
+        return;
+    }
+  
+    window.open(shareUrl, '_blank');
+  }
+  
 }

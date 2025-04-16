@@ -49,7 +49,7 @@ setSelectedArticle(article: any) {
         if (response && Array.isArray(response.posts)) {
           // Filter posts to include only those with type 'business'
           this.news = response.posts
-            .filter((post: any) => post.categories === 'business')
+            .filter((post: any) => post.categories === 'Business')
             .map((post: any) => {
               const updatedThumb = post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null;
               return {

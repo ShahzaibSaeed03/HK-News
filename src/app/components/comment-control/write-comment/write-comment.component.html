@@ -6,11 +6,30 @@
                 class="px-0 w-full text-sm text-black border-0 focus:ring-0 focus:outline-none"
                 placeholder="Write a comment..." required></textarea>
     </div>
-    <button type="submit"
+    <button type="submit" 
             class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-black rounded-lg hover:bg-gray-800">
       Post comment
     </button>
 
     
   </form>
-  
+  <!-- Login Required Modal -->
+<!-- Login Required Modal -->
+<div *ngIf="showLoginPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+  <div class="relative bg-white rounded-xl shadow-lg p-6 max-w-sm text-center animate-bounce-in w-full sm:w-[400px]">
+
+    <!-- Close X Button -->
+    <button (click)="closePopup()" class="absolute top-2 right-2 text-gray-400 hover:text-black text-xl font-bold">&times;</button>
+
+    <h2 class="text-lg font-semibold text-black mb-3">⚠️ You need to log in first!</h2>
+    <p class="text-sm text-gray-600 mb-5">Please log in to post a comment on this article.</p>
+
+    <!-- Login and Signup Buttons -->
+    <div class="flex justify-center gap-4">
+      <a routerLink="/login" class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">Login</a>
+      <a routerLink="/register" class="bg-gray-200 text-black px-4 py-2 rounded-md hover:bg-gray-300 transition">Signup</a>
+    </div>
+
+  </div>
+</div>
+

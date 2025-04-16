@@ -14,93 +14,76 @@ import { CommonModule } from '@angular/common';
 export class TrandingNewsComponent implements OnInit {
 
   news: any[] = [];
-  mainImage: string = ''; // Stores the first news image
+  mainImage = ''; // For main news image
+  private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
 
-  constructor(private httpArticle: ArticleService, private router: Router) {}
-
-  setSelectedArticle(article: any) {
-    this.httpArticle.setSelectedArticle(article);
-  }
-
-  // Convert the published_at timestamp to a relative time
-  getRelativeTime(publishedAt: string): string {
-    const parsedDate = parseISO(publishedAt); // Parse the ISO 8601 string to a Date object
-    return formatDistanceToNowStrict(parsedDate); // Get the relative time without "about"
-  }
+  constructor(
+    private readonly httpArticle: ArticleService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.getArticles();
   }
 
-  private baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
+  private getArticles(): void {
+    const saved = localStorage.getItem('articles');
 
-  getArticles(): void {
-    // Check if the articles are already in localStorage
-    const savedArticles = localStorage.getItem('articles');
-    if (savedArticles) {
-      this.news = JSON.parse(savedArticles);
-      console.log('Articles loaded from localStorage:', this.news);
-
-      // Shuffle the articles and take the first 16
-      this.news = this.shuffleAndLimit(this.news, 16);
-      console.log('Random 16 articles from localStorage:', this.news);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      this.news = this.shuffleAndLimit(parsed, 16);
     } else {
-      // Fetch articles from API if not found in localStorage
       this.httpArticle.getArticle().subscribe({
-        next: (response) => {
-          console.log('API Response:', response);
-  
-          if (response && Array.isArray(response.posts)) {
-            let formattedPosts = response.posts.map((post: any) => {
-              const updatedThumb = post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null;
-              return {
-                ...post,
-                thumb: updatedThumb,
-                relativeTime: this.getRelativeTime(post.spdate),
-                views: post.popularity_stats?.all_time_stats || 0 // fallback if null
-              };
-            });
-  
-            // Sort by views descending
-            formattedPosts = formattedPosts.sort((a: any, b: any) => b.views - a.views);
-  
-            // Save articles to localStorage
-            localStorage.setItem('articles', JSON.stringify(formattedPosts));
-  
-            // Shuffle and limit to 16 articles
-            this.news = this.shuffleAndLimit(formattedPosts, 16);
-            console.log('Random 16 articles from API:', this.news);
-          } else {
-            console.error('Invalid API response format:', response);
+        next: ({ posts }: any) => {
+          if (!Array.isArray(posts)) {
             this.news = [];
+            return;
           }
+
+          const formatted = posts.map((post: any) => ({
+            ...post,
+            thumb: post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null,
+            relativeTime: this.getRelativeTime(post.spdate),
+            views: post.popularity_stats?.all_time_stats || 0
+          }))
+          .sort((a, b) => b.views - a.views);
+
+          localStorage.setItem('articles', JSON.stringify(formatted));
+          this.news = this.shuffleAndLimit(formatted, 16);
         },
-        error: (error) => console.error('Error fetching articles:', error),
+        error: err => {
+          console.error('Error fetching articles:', err);
+          this.news = [];
+        }
       });
     }
   }
 
-  getPost(type: string, slug: string, article: any) {
-    // Clear the previously selected article from localStorage
+  getPost(type: string, slug: string, article: any): void {
     localStorage.removeItem('selectedArticle');
 
-    this.httpArticle.getsinglepost(type, slug).subscribe(result => {
+    this.httpArticle.getsinglepost(type, slug).subscribe(() => {
       this.setSelectedArticle(article);
-      localStorage.setItem('selectedArticle', JSON.stringify(article)); // Save the new article to localStorage
+      localStorage.setItem('selectedArticle', JSON.stringify(article));
 
-      // Navigate based on type, pass real values, not param names
-      if (type === 'video') {
-        this.router.navigate(['video-news', type, slug]);
-      } else if (type === 'news') {
-        this.router.navigate(['article', type, slug]);
-      }
-
-      console.log(result);
+      const route = type === 'video' ? 'video-news' : 'article';
+      this.router.navigate([route, type, slug]);
     });
   }
 
+  private setSelectedArticle(article: any): void {
+    this.httpArticle.setSelectedArticle(article);
+  }
+
+  private getRelativeTime(date: string): string {
+    return formatDistanceToNowStrict(parseISO(date));
+  }
+
   private shuffleAndLimit(arr: any[], count: number): any[] {
-    // Shuffle the array randomly
-    return arr.sort(() => 0.5 - Math.random()).slice(0, count);
+    return arr
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .slice(0, count)
+      .map(({ value }) => value);
   }
 }

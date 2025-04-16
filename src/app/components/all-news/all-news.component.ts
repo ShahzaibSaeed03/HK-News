@@ -18,6 +18,27 @@ export class AllNewsComponent implements OnInit {
   news: any[] = [];
   mainImage: string = ''; // Stores the first news image
 
+  // Pagination
+pageSize = 72;
+currentPage = 1;
+
+get paginatedNews() {
+  const start = (this.currentPage - 1) * this.pageSize;
+  const end = start + this.pageSize;
+  return this.news.slice(start, end);
+}
+
+get totalPages(): number {
+  return Math.ceil(this.news.length / this.pageSize);
+}
+
+changePage(page: number) {
+  if (page >= 1 && page <= this.totalPages) {
+    this.currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
  
 
   constructor(private httpArticle:ArticleService , private router: Router) {}

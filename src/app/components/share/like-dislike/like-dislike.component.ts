@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ArticleService } from '../../service/article.service';
 import { LikeServiceService } from '../service/like-service.service';
 
 @Component({
   selector: 'app-like-dislike',
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLink],
   templateUrl: './like-dislike.component.html',
   styleUrl: './like-dislike.component.css'
 })
@@ -14,6 +14,7 @@ export class LikeDislikeComponent implements OnInit {
   showPopup = false;
   showDescription = false;
   showReactions = true;
+  showLoginPopup = false;
 
   article: any;
   reactions: any[] = [];
@@ -75,10 +76,17 @@ export class LikeDislikeComponent implements OnInit {
   }
 
   toggleLike() {
-    this.liked = !this.liked;
+    // Handle like toggle directly in UI
     if (this.liked) {
+      this.liked = false;
+      this.likeCount -= 1;
+    } else {
+      this.liked = true;
       this.disliked = false;
+      this.likeCount += 1;
     }
+
+    this.sendReaction(this.liked ? 'like' : 'dislike');
   }
 
   toggleDislike() {
@@ -86,40 +94,39 @@ export class LikeDislikeComponent implements OnInit {
     if (this.disliked) {
       this.liked = false;
     }
-  }
 
-  addLike(): void {
-    this.liked = true;
-    this.disliked = false;
-    this.showReactions = true;
-    this.getLike();
+    this.sendReaction(this.disliked ? 'dislike' : 'like');
   }
 
   sendReaction(reactionType: string): void {
     const userId = localStorage.getItem('userId');
     const postId = this.article.id;
-
+  
+    if (!userId) {
+      this.showLoginPopup = true;
+      return;
+    }
+  
     const selected = this.reactions.find(r => r.reaction_type === reactionType);
     if (selected) {
       this.selectedReactionIcon = 'https://new.hardknocknews.tv' + selected.icon;
-
+  
       const allReactions = JSON.parse(localStorage.getItem('postReactions') || '{}');
-
-      // ✅ Only increment if not already reacted
+  
       if (!allReactions[postId]) {
         this.likeCount += 1;
       }
-
+  
       allReactions[postId] = reactionType;
       localStorage.setItem('postReactions', JSON.stringify(allReactions));
     }
-
+  
     const data = {
       user_id: userId,
       post_id: postId,
       reaction_type: reactionType
     };
-
+  
     this.LikeServiceHttp.addReaction(data).subscribe(
       (res: any) => {
         console.log('Reaction sent successfully:', res);
@@ -130,6 +137,7 @@ export class LikeDislikeComponent implements OnInit {
       }
     );
   }
+  
 
   getLike(): void {
     this.LikeServiceHttp.getReaction().subscribe(
@@ -143,6 +151,8 @@ export class LikeDislikeComponent implements OnInit {
           const selected = this.reactions.find(r => r.reaction_type === savedReaction);
           if (selected) {
             this.selectedReactionIcon = 'https://new.hardknocknews.tv' + selected.icon;
+            this.liked = savedReaction === 'like';  // Ensure the correct state is applied
+            this.disliked = savedReaction === 'dislike'; // Ensure the correct state is applied
           }
         }
       },
@@ -151,4 +161,9 @@ export class LikeDislikeComponent implements OnInit {
       }
     );
   }
+
+  closePopups() {
+    this.showLoginPopup = false;
+  }
 }
+

@@ -1,10 +1,22 @@
+
+<div *ngIf="article && article.entries && article.entries[0]?.video" >
+  <video controls autoplay loop   *ngIf="isMobile"
+  class="w-full h-72  mt-2 mb-4  ">
+    <source [src]="getVideoUrl(article.entries[0].video)" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
 <div class="container mx-auto p-2  md:p-12 flex flex-wrap md:flex-nowrap gap-8 text-black text-family" *ngIf="article">
+
+
+  
     <!-- Main News Section -->
     <div class="w-full md:w-[70%] p-1 ">
        
        
-        <div *ngIf="article && article.entries && article.entries[0]?.video">
-            <video controls autoplay loop class="w-full h-64 md:h-96 mt-4 mb-4 rounded-lg object-cover">
+        <div *ngIf="article && article.entries && article.entries[0]?.video" >
+            <video controls autoplay loop   *ngIf="!isMobile"
+            class="w-full h-64 md:h-96 mt-4 mb-4 rounded-lg o ">
               <source [src]="getVideoUrl(article.entries[0].video)" type="video/mp4">
               Your browser does not support the video tag.
             </video>

@@ -2,15 +2,16 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-write-comment',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,RouterLink],
   templateUrl: './write-comment.component.html',
   styleUrls: ['./write-comment.component.css']
 })
 export class WriteCommentComponent {
-  
+  showLoginPopup = false;
   commentText: string = '';
 
   constructor(private http: HttpClient) {}
@@ -19,14 +20,14 @@ export class WriteCommentComponent {
     const selectedArticle = localStorage.getItem('selectedArticle');
     const username = localStorage.getItem('user_username');
     const email = localStorage.getItem('user_email');
-  
+
     if (!selectedArticle || !username || !email) {
-      console.error('Missing article or user info');
+      this.showLoginPopup = true;
       return;
     }
-  
+
     const article = JSON.parse(selectedArticle);
-  
+
     const commentData = {
       comment: this.commentText,
       type: 'addcomment',
@@ -36,14 +37,17 @@ export class WriteCommentComponent {
       user_username: username,
       user_email: email
     };
-  
+
     this.http.post('https://new.hardknocknews.tv/easy/public/api/comments_api/submit', commentData)
       .subscribe(response => {
         console.log('Comment submitted:', response);
-        this.commentText = ''; // Clear after submit
+        this.commentText = '';
       }, error => {
         console.error('Error posting comment:', error);
       });
   }
-  
+
+  closePopup() {
+    this.showLoginPopup = false;
+  }
 }

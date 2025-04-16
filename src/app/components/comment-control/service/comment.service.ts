@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CommentService {
 
-  private apiUrl = 'https://new.hardknocknews.tv/easy/public/api/comments/content/contentId';
+  private apiUrl = 'https://new.hardknocknews.tv/easy/public/api/comments/content';
 
   constructor(private http: HttpClient) {}
 

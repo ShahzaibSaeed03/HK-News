@@ -5,7 +5,7 @@ import { ArticleService } from '../service/article.service';
 
 @Component({
   selector: 'app-kandy-eye-slider',
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule],
   templateUrl: './kandy-eye-slider.component.html',
   styleUrl: './kandy-eye-slider.component.css'
 })
