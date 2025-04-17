@@ -1,7 +1,7 @@
 
 <div *ngIf="article && article.entries && article.entries[0]?.video" >
-  <video controls autoplay loop   *ngIf="isMobile"
-  class="w-full h-72  mt-2 mb-4  ">
+  <video controls autoplay    *ngIf="isMobile"
+  class="w-full  h-72  mt-2 mb-4  ">
     <source [src]="getVideoUrl(article.entries[0].video)" type="video/mp4">
     Your browser does not support the video tag.
   </video>
@@ -15,8 +15,8 @@
        
        
         <div *ngIf="article && article.entries && article.entries[0]?.video" >
-            <video controls autoplay loop   *ngIf="!isMobile"
-            class="w-full h-64 md:h-96 mt-4 mb-4 rounded-lg o ">
+            <video controls  autoplay   *ngIf="!isMobile"
+            class="w-full h-64 object-fill md:h-96 mt-4 mb-4 rounded-lg o ">
               <source [src]="getVideoUrl(article.entries[0].video)" type="video/mp4">
               Your browser does not support the video tag.
             </video>
@@ -49,22 +49,7 @@
   <app-like-dislike></app-like-dislike>
     
 
-           
-<!-- <div class="flex justify-between items-center mt-6">
-    <div class="flex gap-8 sm:gap-9 text-4xl sm:text-4xl">
-        <span>
-            <i class="fa-brands fa-instagram"></i>
-        </span>
-        <span>
-            <i class="fa-brands fa-square-facebook"></i>
-        </span>
-        <span>
-            <i class="fa-brands fa-square-x-twitter"></i>
-        </span>
-    </div>
 
-  
-</div> -->
 
         
         

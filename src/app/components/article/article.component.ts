@@ -28,26 +28,20 @@ export class ArticleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check if there's an article in localStorage
-    const storedArticle = localStorage.getItem('selectedArticle');
-    if (storedArticle) {
-      this.article = JSON.parse(storedArticle); // Load the article from localStorage
+    const navData = history.state['articleData']; // 👈 router se data le rahe hain
+  
+    if (navData) {
+      this.article = navData;
       this.setThumbUrl(this.article.thumb);
       this.setExtraImages(this.article.entries);
       this.tags = this.article.tags;
       console.log(this.article);
       this.article.spdate = this.calculateTimeAgo(this.article.spdate);
     } else {
-      this.route.params.subscribe(params => {
-        this.articleService.getsinglepost(params['type'], params['slug']).subscribe(data => {
-          this.article = data;
-          this.setThumbUrl(data.thumb);
-          this.setExtraImages(data.entries);
-          this.tags = data.tags;
-          console.log(this.article);
-          this.article.spdate = this.calculateTimeAgo(data.spdate);
-        });
-      });
+      // If data not found (e.g. direct URL open), redirect or show message
+      console.error("No article data received.");
+      // Optional: Redirect to home or 404 page
+      // this.router.navigate(['/']);
     }
   }
   

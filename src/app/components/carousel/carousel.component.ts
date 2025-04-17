@@ -15,29 +15,7 @@ export class CarouselComponent implements OnInit {
 
     constructor(private httpArticle:ArticleService , private router: Router) {}
   
-  news = [
-    {
-      image: 'https://picsum.photos/600/300?random=1',
-      title: 'Breaking News: Market Hits New Highs',
-      tag:'business'
-    },
-    {
-      image: 'https://picsum.photos/600/300?random=2',
-      title: 'Tech Update: New Innovations in AI',
-      tag:'Tech'
 
-    },
-    {
-      image: 'https://picsum.photos/600/300?random=3',
-      title: 'Sports: Championship Finals Excite Fans',
-      tag:"Scinece"
-    },
-    {
-      image: 'https://picsum.photos/600/300?random=4',
-      title: 'Politics: Key Debates Before Elections',
-      tag:'Politics'
-    },
-  ];
 
   newss: any[] = [];
 
@@ -51,12 +29,12 @@ export class CarouselComponent implements OnInit {
   }
 
   nextSlide() {
-    this.currentIndex = (this.currentIndex + 1) % this.news.length;
+    this.currentIndex = (this.currentIndex + 1) % this.newss.length;
   }
 
   prevSlide() {
     this.currentIndex =
-      this.currentIndex === 0 ? this.news.length - 1 : this.currentIndex - 1;
+      this.currentIndex === 0 ? this.newss.length - 1 : this.currentIndex - 1;
   }
 
   startAutoSlide() {
@@ -66,28 +44,46 @@ export class CarouselComponent implements OnInit {
   }
 
 
-  getArticles(): void {
-    this.httpArticle.getArticle().subscribe({
-      next: (response) => {
-        console.log('API Response:', response);
-  
-        if (response && Array.isArray(response.posts)) {
-          this.newss = response.posts.map((post: any) => {
-            const updatedThumb = post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null;
-            console.log('Updated Thumb URL:', updatedThumb); 
-            return {
-              ...post,
-              thumb: updatedThumb,
+  private getArticles(): void {
+    const saved = localStorage.getItem('articles');
 
-            };
-          });
-        } else {
-          console.error('Invalid API response format:', response);
-          this.news = [];
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      this.newss = this.shuffleAndLimit(parsed, 12);
+      console.log("limited item 16", this.newss)
+    } else {
+      this.httpArticle.getArticle().subscribe({
+        next: ({ posts }: any) => {
+          if (!Array.isArray(posts)) {
+            this.newss = [];
+            return;
+          }
+
+          const formatted = posts.map((post: any) => ({
+            ...post,
+            thumb: post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null,
+            views: post.popularity_stats?.all_time_stats || 0
+          }))
+          .sort((a:any, b:any) => b.views - a.views);
+
+          localStorage.setItem('articles', JSON.stringify(formatted));
+          this.newss = this.shuffleAndLimit(formatted, 16);
+        },
+        error: err => {
+          console.error('Error fetching articles:', err);
+          this.newss = [];
         }
-      },
-      error: (error) => console.error('Error fetching articles:', error),
-    });
+      });
+    }
+  }
+
+
+  private shuffleAndLimit(arr: any[], count: number): any[] {
+    return arr
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .slice(0, count)
+      .map(({ value }) => value);
   }
 
   stopAutoSlide() {

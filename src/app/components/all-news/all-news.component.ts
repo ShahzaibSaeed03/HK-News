@@ -1,19 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { Router, RouterLink } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 import { KandyEyeSliderComponent } from "../kandy-eye-slider/kandy-eye-slider.component";
+import { LazyImgDirective } from './lazy-img.directive';
 
 @Component({
   selector: 'app-all-news',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, KandyEyeSliderComponent],
+  imports: [CommonModule, FontAwesomeModule, KandyEyeSliderComponent,LazyImgDirective],
   templateUrl: './all-news.component.html',
   styleUrls: ['./all-news.component.css']
 })
-export class AllNewsComponent implements OnInit {
+export class AllNewsComponent implements OnInit, OnChanges {
+  filteredNews: any[] = [];
+  loading: boolean = true; // Track loading state
+
+
+
+  @Input() searchTerm: string = '';
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['searchTerm']) {
+      this.applySearch();
+    }
+  }
+
+  applySearch(): void {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      this.filteredNews = this.news;
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.filteredNews = this.news.filter(post =>
+        post.title?.toLowerCase().includes(term) || 
+        post.categories?.toLowerCase().includes(term)
+      );
+    }
+  }
+
 
   news: any[] = [];
   mainImage: string = ''; // Stores the first news image
@@ -23,10 +50,12 @@ pageSize = 72;
 currentPage = 1;
 
 get paginatedNews() {
+  const source = this.filteredNews.length ? this.filteredNews : this.news;
   const start = (this.currentPage - 1) * this.pageSize;
   const end = start + this.pageSize;
-  return this.news.slice(start, end);
+  return source.slice(start, end);
 }
+
 
 get totalPages(): number {
   return Math.ceil(this.news.length / this.pageSize);
@@ -45,9 +74,9 @@ changePage(page: number) {
 
    heading: string[] = [
     'Celebrity',
-    'Politices',
+    'Politics',
     "Crime",
-    "Bussninss",
+    "Business",
     "Entertainment",
  
   ];
@@ -71,6 +100,8 @@ setSelectedArticle(article: any) {
 
   ngOnInit(): void {
     this.getArticles();
+    this.applySearch();
+
 
   }
 
@@ -79,6 +110,8 @@ setSelectedArticle(article: any) {
 
 
   getArticles(): void {
+    this.loading = true; // Start loading
+
     this.httpArticle.getArticle().subscribe({
       next: (response) => {
         console.log('API Response more news:', response);
@@ -105,6 +138,9 @@ setSelectedArticle(article: any) {
         }
       },
       error: (error) => console.error('Error fetching articles:', error),
+      complete: () => {
+        this.loading = false; // Stop loading when done
+      }
     });
   }
   
@@ -113,23 +149,14 @@ setSelectedArticle(article: any) {
   
   
   getPost(type: string, slug: string, article: any) {
-    // Clear the previously selected article from localStorage
-    localStorage.removeItem('selectedArticle');
+    this.httpArticle.setSelectedArticle(article); // Optional if needed globally
   
-    this.httpArticle.getsinglepost(type, slug).subscribe(result => {
-      this.httpArticle.setSelectedArticle(article);
-      localStorage.setItem('selectedArticle', JSON.stringify(article)); // Save the new article to localStorage
-  
-      // Navigate based on type, pass real values, not param names
-      if (type === 'video') {
-        this.router.navigate(['video-news', type, slug]);
-      } else if (type === 'news') {
-        this.router.navigate(['article', type, slug]);
-      }
-  
-      console.log(result);
+    const routePath = type === 'video' ? 'video-news' : 'article';
+    this.router.navigate([routePath, type, slug], {
+      state: { articleData: article } // 👈 send full article data here
     });
   }
+  
   
   
   

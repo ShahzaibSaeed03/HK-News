@@ -1,0 +1,66 @@
+<div class="bg-gray-100 text-gray-800">
+
+    <!-- Profile Container -->
+    <div class="max-w-3xl mx-auto bg-white rounded-lg overflow-hidden shadow mt-5">
+  
+      <!-- Cover Image -->
+      <div class="relative">
+        <img [src]="'http://127.0.0.1:8000/storage/' + user?.splash" alt="Cover Image" class="w-full h-48 object-cover">
+        <div class="absolute top-2 left-2">
+          <button (click)="logout()" class="bg-red-600 text-white text-sm px-4 py-1 rounded hover:bg-red-700 flex items-center">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+          </button>
+        </div>
+      
+  
+        <!-- Profile Picture -->
+        <div class="absolute -bottom-10 left-4 flex items-center space-x-4">
+          <img [src]="'http://127.0.0.1:8000/storage/' + user?.icon" alt="Profile Picture" class="w-20 h-20 rounded-full border-4 border-white shadow-md">
+          <div>
+            <h2 class="text-xl font-semibold">{{ user?.name }}</h2>
+            <p class="text-sm text-gray-500">{{ user?.username }}</p>
+          </div>
+        </div>
+  
+        <!-- Edit Button -->
+        <div class="absolute top-2 right-2">
+              <button (click)="editProfile()" class="bg-blue-600 text-white text-sm px-4 py-1 rounded hover:bg-blue-700 flex items-center">
+                <i class="fas fa-pen mr-2"></i> Edit Profile
+              </button>
+              
+        </div>
+      </div>
+  
+      <!-- Info Section -->
+      <div class="mt-12 px-4 pb-4">
+        <p class="text-sm text-gray-600"><i class="fa-solid fa-envelope mr-1"></i> {{ user?.email }}</p>
+        <p class="text-sm text-gray-600"><i class="fa-solid fa-user-tag mr-1"></i> Usertype: {{ user?.usertype }}</p>
+        <p class="text-sm text-gray-600"><i class="fa-solid fa-mars mr-1"></i> Gender: {{ user?.genre }}</p>
+        <p class="text-sm text-gray-600"><i class="fa-solid fa-calendar mr-1"></i> Joined: {{ user?.created_at | date:'MMMM d, y' }}</p>
+      </div>
+  
+      <!-- About Section -->
+      <div class="border-t px-4 py-4">
+        <h3 class="font-semibold text-lg mb-2">About</h3>
+        <p class="text-sm text-gray-500 italic">{{ user?.about ? user.about : 'No about info available' }}</p>
+      </div>
+  
+      <!-- Social Links -->
+      <div class="border-t px-4 py-4">
+        <h3 class="font-semibold text-lg mb-2">Social Links</h3>
+        <div class="flex gap-4 text-xl text-blue-600">
+          <a *ngIf="user?.facebookurl" [href]="user.facebookurl" class="hover:text-blue-800">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a *ngIf="user?.twitterurl" [href]="user.twitterurl" class="hover:text-blue-400">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a *ngIf="user?.weburl" [href]="user.weburl" class="hover:text-gray-600">
+            <i class="fas fa-globe"></i>
+          </a>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  

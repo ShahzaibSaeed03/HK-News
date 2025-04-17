@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { parseISO, formatDistanceToNowStrict } from 'date-fns';
 import { ArticleService } from '../service/article.service';
 import { CommonModule } from '@angular/common';
@@ -17,6 +17,7 @@ export class MoreNewsComponent implements OnInit {
 
   constructor(
     private readonly httpArticle: ArticleService,
+    route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
@@ -51,41 +52,16 @@ export class MoreNewsComponent implements OnInit {
     });
   }
 
-  getTranding(): void {
-    this.httpArticle.getArticle().subscribe({
-      next: (res: any) => {
-        const posts = res?.posts;
-        if (!Array.isArray(posts)) {
-          this.news = [];
-          return;
-        }
 
-        this.news = posts
-          .map((post: any) => {
-            const mapped = this.mapPost(post);
-            return {
-              ...mapped,
-              views: post.popularity_stats?.all_time_stats || 0
-            };
-          })
-          .sort((a, b) => b.views - a.views)
-          .slice(0, 10);
-      },
-      error: () => {
-        this.news = [];
-      }
-    });
-  }
 
-  getPost(type: string, slug: string, article: any): void {
-    localStorage.removeItem('selectedArticle');
-
-    this.httpArticle.getsinglepost(type, slug).subscribe(() => {
-      this.setSelectedArticle(article);
-      localStorage.setItem('selectedArticle', JSON.stringify(article));
-
-      const route = type === 'video' ? 'video-news' : 'article';
-      this.router.navigate([route, type, slug]);
+  getPost(type: string, slug: string, article: any) {
+    const routePath = type === 'video' ? 'video-news' : 'article';
+  
+    // First navigate to dummy route (like current + '?refresh=true'), then to actual
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([routePath, type, slug], {
+        state: { articleData: article }
+      });
     });
   }
 
@@ -109,7 +85,5 @@ export class MoreNewsComponent implements OnInit {
     return formatDistanceToNowStrict(parseISO(date));
   }
 
-  private setSelectedArticle(article: any): void {
-    this.httpArticle.setSelectedArticle(article);
-  }
+ 
 }

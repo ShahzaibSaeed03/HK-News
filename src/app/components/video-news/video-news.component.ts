@@ -37,21 +37,19 @@ export class VideoNewsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.updateIsMobile();
-    window.scrollTo(0, 0); // Scroll to top
 
-    const stored = localStorage.getItem('selectedArticle');
-    if (stored) {
-      this.setArticleData(JSON.parse(stored));
+  
+    const navData = history.state['articleData'];
+    if (navData) {
+      this.setArticleData(navData);
     } else {
-      this.route.params.subscribe(params => {
-        this.articleService.getsinglepost(params['type'], params['slug']).subscribe(data => {
-          localStorage.setItem('selectedArticle', JSON.stringify(data));
-          this.setArticleData(data);
-        });
-      });
+      // Optional: redirect back or show error if no data received
+      console.error("No article data received via router.");
     }
   }
+  
 
   private setArticleData(data: any): void {
     this.article = data;

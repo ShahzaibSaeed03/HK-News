@@ -3,7 +3,7 @@
     <div class="w-full md:w-[70%] p-1">
         <h1 class="text-3xl md:text-[40px] font-[700] md:font-[700] text-black leading-tight">
             {{article.title}}    </h1>
-        <img *ngIf="thumbUrl" [src]="thumbUrl" alt="Article Thumbnail" alt="News Image" class="w-full h-64 md:h-96 mt-4 rounded-lg ">
+        <img *ngIf="thumbUrl" [src]="thumbUrl" alt="Article Thumbnail" alt="News Image" class="w-full  mt-4 object-fill rounded-lg ">
         <div class="mt-2  gap-2 text-gray-400 text-md">
             <div class="">By: <span class="text-black font-semibold">{{article.author}}</span> </div>
             <div>Published: {{ article.spdate }}</div>

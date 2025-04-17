@@ -10,10 +10,7 @@ import { ArticleService } from '../service/article.service';
   styleUrl: './kandy-eye-slider.component.css'
 })
 export class KandyEyeSliderComponent implements OnInit, OnDestroy {
-  // cards = Array.from({ length: 8 }, (_, i) => ({
-  //   image: `https://picsum.photos/300/200?random=${i + 1}`,
-  //   title: `Headline: How a Stuffed Animal Became Her Go-To Therapy for Surviving Trump’s Presidency ${i + 1}`
-  // }));
+
   
 
   constructor(private articleService: ArticleService , private router: Router) {}

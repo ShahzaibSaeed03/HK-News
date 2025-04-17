@@ -2,16 +2,16 @@
 
 <ng-container *ngFor="let item of news; ">
     <div 
-    class="flex flex-row gap-1 items-center overflow-hidden py-2"
+    class="flex flex-row gap-1 items-center overflow-hidden py-2 h-fit cursor-pointer"
     (click)="getPost(item.type, item.slug, item)"
   >
     <img 
       [src]="item.thumb" 
       alt="Video Thumbnail" 
-      class="w-full h-28 object-cover rounded"
+      class="w-full h-36 object-fill rounded"
     >
     
-    <div class="w-full h-28 sm:w-2/3 text-left font-semibold flex flex-col justify-between px-1">
+    <div class="w-full h-36 sm:w-1/2 text-left font-semibold flex flex-col justify-between px-1">
       <p class="text-black md:text-[12px] text-[16px] overflow-hidden font-semibold">
         {{ item.title }}
       </p>

@@ -59,21 +59,17 @@ export class TrandingNewsComponent implements OnInit {
     }
   }
 
-  getPost(type: string, slug: string, article: any): void {
-    localStorage.removeItem('selectedArticle');
-
-    this.httpArticle.getsinglepost(type, slug).subscribe(() => {
-      this.setSelectedArticle(article);
-      localStorage.setItem('selectedArticle', JSON.stringify(article));
-
-      const route = type === 'video' ? 'video-news' : 'article';
-      this.router.navigate([route, type, slug]);
+  getPost(type: string, slug: string, article: any) {
+    const routePath = type === 'video' ? 'video-news' : 'article';
+  
+    // First navigate to dummy route (like current + '?refresh=true'), then to actual
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([routePath, type, slug], {
+        state: { articleData: article }
+      });
     });
   }
-
-  private setSelectedArticle(article: any): void {
-    this.httpArticle.setSelectedArticle(article);
-  }
+  
 
   private getRelativeTime(date: string): string {
     return formatDistanceToNowStrict(parseISO(date));

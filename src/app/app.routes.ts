@@ -9,6 +9,8 @@ import { CelebirtyComponent } from './components/celebirty/celebirty.component';
 import { CrimeComponent } from './components/crime/crime.component';
 import { EntertainmentComponent } from './components/entertainment/entertainment.component';
 import { PoliticsComponent } from './components/politics/politics.component';
+import { MyProfileComponent } from './components/my-profile/my-profile.component';
+import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 
 
 export const routes: Routes = [
@@ -54,5 +56,11 @@ export const routes: Routes = [
         path:'celebirty-news' ,
         component:CelebirtyComponent
       },
+      {
+        path:"my-profile",
+        component:MyProfileComponent
+      }
+,
+{ path: 'edit-profile', component: EditProfileComponent },
 
 ];

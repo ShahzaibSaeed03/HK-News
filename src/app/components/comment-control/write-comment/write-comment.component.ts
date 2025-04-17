@@ -1,16 +1,20 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+// ...rest of your imports
 
 @Component({
   selector: 'app-write-comment',
-  imports: [CommonModule,FormsModule,RouterLink],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './write-comment.component.html',
   styleUrls: ['./write-comment.component.css']
 })
 export class WriteCommentComponent {
+  @Output() commentSubmitted = new EventEmitter<void>();
+
   showLoginPopup = false;
   commentText: string = '';
 
@@ -39,12 +43,16 @@ export class WriteCommentComponent {
     };
 
     this.http.post('https://new.hardknocknews.tv/easy/public/api/comments_api/submit', commentData)
-      .subscribe(response => {
-        console.log('Comment submitted:', response);
-        this.commentText = '';
-      }, error => {
-        console.error('Error posting comment:', error);
-      });
+      .subscribe(
+        response => {
+          console.log('Comment submitted:', response);
+          this.commentText = '';
+          this.commentSubmitted.emit(); // trigger event
+        },
+        error => {
+          console.error('Error posting comment:', error);
+        }
+      );
   }
 
   closePopup() {
