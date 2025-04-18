@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { parseISO, formatDistanceToNowStrict } from 'date-fns';
 import { ArticleService } from '../service/article.service';
 import { CommonModule } from '@angular/common';
@@ -11,68 +11,69 @@ import { CommonModule } from '@angular/common';
   templateUrl: './tranding-news.component.html',
   styleUrls: ['./tranding-news.component.css']
 })
-export class TrandingNewsComponent implements OnInit {
-
+export class TrandingNewsComponent  implements OnInit {
   news: any[] = [];
-  mainImage = ''; // For main news image
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
 
   constructor(
     private readonly httpArticle: ArticleService,
+    private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    this.getArticles();
-  }
-
-  private getArticles(): void {
-    const saved = localStorage.getItem('articles');
-
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      this.news = this.shuffleAndLimit(parsed, 16);
+    const savedArticles = localStorage.getItem('articles');
+    if (savedArticles) {
+      this.news = this.shuffleAndLimit(JSON.parse(savedArticles), 15);
     } else {
-      this.httpArticle.getArticle().subscribe({
-        next: ({ posts }: any) => {
-          if (!Array.isArray(posts)) {
-            this.news = [];
-            return;
-          }
-
-          const formatted = posts.map((post: any) => ({
-            ...post,
-            thumb: post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null,
-            relativeTime: this.getRelativeTime(post.spdate),
-            views: post.popularity_stats?.all_time_stats || 0
-          }))
-          .sort((a, b) => b.views - a.views);
-
-          localStorage.setItem('articles', JSON.stringify(formatted));
-          this.news = this.shuffleAndLimit(formatted, 16);
-        },
-        error: err => {
-          console.error('Error fetching articles:', err);
-          this.news = [];
-        }
-      });
+      this.fetchArticles();
     }
   }
 
-  getPost(type: string, slug: string, article: any) {
-    const routePath = type === 'video' ? 'video-news' : 'article';
-  
-    // First navigate to dummy route (like current + '?refresh=true'), then to actual
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([routePath, type, slug], {
-        state: { articleData: article }
-      });
+  private fetchArticles(): void {
+    this.httpArticle.getArticle().subscribe({
+      next: (res: any) => {
+        const posts = res?.posts;
+        if (!Array.isArray(posts)) {
+          this.news = [];
+          return;
+        }
+
+        const mapped = posts.map((post: any) => this.mapPost(post)).sort(
+          (a, b) => new Date(b.spdate).getTime() - new Date(a.spdate).getTime()
+        );
+
+        localStorage.setItem('articles', JSON.stringify(mapped));
+        this.news = this.shuffleAndLimit(mapped, 15);
+      },
+      error: () => {
+        this.news = [];
+      }
     });
   }
-  
 
-  private getRelativeTime(date: string): string {
-    return formatDistanceToNowStrict(parseISO(date));
+  getPost(type: string, slug: string, article: any) {
+    localStorage.removeItem('selectedArticle');
+
+    this.httpArticle.getsinglepost(type, slug).subscribe(result => {
+      this.httpArticle.setSelectedArticle(article);
+      localStorage.setItem('selectedArticle', JSON.stringify(article));
+
+      const routePath = type === 'video' ? 'video-news' : 'article';
+
+      // Force component reload using Angular route strategy
+      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+      this.router.onSameUrlNavigation = 'reload';
+      this.router.navigate([routePath, type, slug]);
+    });
+  }
+
+  private mapPost(post: any): any {
+    return {
+      ...post,
+      thumb: post.thumb ? `${this.baseUrl}/${post.thumb}-s.jpg` : null,
+      relativeTime: this.getRelativeTime(post.spdate)
+    };
   }
 
   private shuffleAndLimit(arr: any[], count: number): any[] {
@@ -81,5 +82,9 @@ export class TrandingNewsComponent implements OnInit {
       .sort((a, b) => a.sort - b.sort)
       .slice(0, count)
       .map(({ value }) => value);
+  }
+
+  private getRelativeTime(date: string): string {
+    return formatDistanceToNowStrict(parseISO(date));
   }
 }

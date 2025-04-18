@@ -10,17 +10,26 @@ import { LazyImgDirective } from './lazy-img.directive';
 @Component({
   selector: 'app-all-news',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, KandyEyeSliderComponent,LazyImgDirective],
+  imports: [CommonModule, FontAwesomeModule, KandyEyeSliderComponent],
   templateUrl: './all-news.component.html',
   styleUrls: ['./all-news.component.css']
 })
 export class AllNewsComponent implements OnInit, OnChanges {
+
+
+  constructor(private httpArticle:ArticleService , private router: Router) {}
+
+
+  categoryGroups: { [key: string]: any[] } = {};
+
+  
   filteredNews: any[] = [];
   loading: boolean = true; // Track loading state
 
 
 
   @Input() searchTerm: string = '';
+
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,7 +79,6 @@ changePage(page: number) {
 
  
 
-  constructor(private httpArticle:ArticleService , private router: Router) {}
 
    heading: string[] = [
     'Celebrity',
@@ -148,12 +156,24 @@ setSelectedArticle(article: any) {
   
   
   
-  getPost(type: string, slug: string, article: any) {
-    this.httpArticle.setSelectedArticle(article); // Optional if needed globally
   
-    const routePath = type === 'video' ? 'video-news' : 'article';
-    this.router.navigate([routePath, type, slug], {
-      state: { articleData: article } // 👈 send full article data here
+  
+  getPost(type: string, slug: string, article: any) {
+    // Clear the previously selected article from localStorage
+    localStorage.removeItem('selectedArticle');
+  
+    this.httpArticle.getsinglepost(type, slug).subscribe(result => {
+      this.httpArticle.setSelectedArticle(article);
+      localStorage.setItem('selectedArticle', JSON.stringify(article)); // Save the new article to localStorage
+  
+      // Navigate based on type, pass real values, not param names
+      if (type === 'video') {
+        this.router.navigate(['video-news', type, slug]);
+      } else if (type === 'news') {
+        this.router.navigate(['article', type, slug]);
+      }
+  
+      console.log(result);
     });
   }
   

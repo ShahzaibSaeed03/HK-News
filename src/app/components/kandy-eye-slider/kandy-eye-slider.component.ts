@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 
 @Component({
@@ -10,66 +10,45 @@ import { ArticleService } from '../service/article.service';
   styleUrl: './kandy-eye-slider.component.css'
 })
 export class KandyEyeSliderComponent implements OnInit, OnDestroy {
-
-  
-
-  constructor(private articleService: ArticleService , private router: Router) {}
-  cards: any[] = []; // no dummy data
-
-  uniqueCategories: string[] = [];  // Store the unique categories
-
+  cards: any[] = [];
   visibleCards = 5;
   currentIndex = 0;
   translateX = 0;
   autoSlideInterval: any;
 
+  constructor(
+    private articleService: ArticleService,
+    private router: Router
+  ) {}
+
   ngOnInit() {
     this.updateVisibleCards();
     this.startAutoSlide();
-    this.getArticles(); // call API first
-
+    this.getArticles();
   }
 
-  @HostListener('window:resize', [])
+  @HostListener('window:resize')
   onResize() {
     this.updateVisibleCards();
   }
 
   updateVisibleCards() {
-    const screenWidth = window.innerWidth;
-    this.visibleCards = screenWidth <= 640 ? 2 : screenWidth <= 1024 ? 3 : 5;
-    this.translateX = -(this.currentIndex * (100 / this.visibleCards));
+    const width = window.innerWidth;
+    this.visibleCards = width <= 640 ? 2 : width <= 1024 ? 3 : 5;
+    this.updateTranslateX();
   }
+
   getArticles(): void {
     this.articleService.getArticle().subscribe({
       next: (response) => {
-        if (response && Array.isArray(response.posts)) {
+        if (response?.posts?.length) {
           this.cards = response.posts.map((post: any) => ({
             title: post.title,
             image: post.thumb ? `https://new.hardknocknews.tv/upload/media/posts/${post.thumb}-s.jpg` : null,
-            categories: post.categories
+            type: post.type,
+            slug: post.slug,
+            original: post // full post saved for reuse
           }));
-  
-          // Initialize a Set to store unique categories
-          const uniqueCategories = new Set<string>();
-  
-          // Iterate over each card and extract categories
-          this.cards.forEach(card => {
-            if (card.categories) {
-              // Ensure categories is an array
-              const categories: string[] = Array.isArray(card.categories) ? card.categories : [card.categories];
-              categories.forEach((category: string) => {
-                uniqueCategories.add(category); // Add each category to the Set
-              });
-            }
-          });
-  
-          // Convert the Set to an array of unique categories
-          this.uniqueCategories = Array.from(uniqueCategories);
-  
-          // Log the unique categories to the console
-          console.log('Unique Categories:', this.uniqueCategories);
-  
         } else {
           this.cards = [];
         }
@@ -80,30 +59,25 @@ export class KandyEyeSliderComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   getPost(type: string, slug: string, article: any) {
-    // Clear the previously selected article from localStorage
     localStorage.removeItem('selectedArticle');
-  
-    this.articleService.getsinglepost(type, slug).subscribe(result => {
+
+    this.articleService.getsinglepost(type, slug).subscribe(() => {
       this.articleService.setSelectedArticle(article);
-      localStorage.setItem('selectedArticle', JSON.stringify(article)); // Save the new article to localStorage
-  
-      // Navigate based on type, pass real values, not param names
-      if (type === 'video') {
-        this.router.navigate(['video-news', type, slug]);
-      } else if (type === 'news') {
-        this.router.navigate(['article', type, slug]);
-      }
-  
-      console.log(result);
+      localStorage.setItem('selectedArticle', JSON.stringify(article));
+
+      const routePath = type === 'video' ? 'video-news' : 'article';
+      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+      this.router.onSameUrlNavigation = 'reload';
+      this.router.navigate([routePath, type, slug]);
     });
   }
-  
+
   startAutoSlide() {
     this.autoSlideInterval = setInterval(() => {
       this.nextSlide();
-    }, 3000); // Auto-slide every 1 second
+    }, 3000);
   }
 
   stopAutoSlide() {
@@ -114,7 +88,7 @@ export class KandyEyeSliderComponent implements OnInit, OnDestroy {
     if (this.currentIndex + this.visibleCards < this.cards.length) {
       this.currentIndex++;
     } else {
-      this.currentIndex = 0; // Reset to the beginning when reaching the end
+      this.currentIndex = 0;
     }
     this.updateTranslateX();
   }
@@ -123,7 +97,7 @@ export class KandyEyeSliderComponent implements OnInit, OnDestroy {
     if (this.currentIndex > 0) {
       this.currentIndex--;
     } else {
-      this.currentIndex = this.cards.length - this.visibleCards; // Move to the last set of slides
+      this.currentIndex = Math.max(this.cards.length - this.visibleCards, 0);
     }
     this.updateTranslateX();
   }

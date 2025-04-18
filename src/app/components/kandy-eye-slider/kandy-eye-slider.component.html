@@ -1,36 +1,33 @@
-<div class="relative w-full max-w-6xl mx-auto ">
+<div class="relative w-full max-w-6xl mx-auto">
+  <button (click)="prevSlide()" class="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
+    &#10094;
+  </button>
 
-    <!-- Left Button -->
-    <button (click)="prevSlide()" class="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
-      &#10094;
-    </button>
-  
-    <!-- Slider Container -->
-    <div class="overflow-hidden"  >
-      <div class="flex transition-transform duration-300" [style.transform]="'translateX(' + translateX + '%)'">
-        <div class="flex-shrink-0 px-2 cursor-pointera cursor-pointer" *ngFor="let card of cards  " (click)="getPost(card.type, card.slug, card)"
-        [ngClass]="{'w-1/5': visibleCards === 5, 'w-1/3': visibleCards === 3, 'w-1/2': visibleCards === 2}">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-2 h-72 flex flex-col"(click)="getPost(card.type,card.slug , card)" >
-          
-          <!-- Image with fixed height -->
+  <div class="overflow-hidden">
+    <div class="flex transition-transform duration-300" [style.transform]="'translateX(' + translateX + '%)'">
+      <div *ngFor="let card of cards" 
+           class="flex-shrink-0 px-2 cursor-pointer"
+           [ngClass]="{
+             'w-1/5': visibleCards === 5,
+             'w-1/3': visibleCards === 3,
+             'w-1/2': visibleCards === 2
+           }"
+           (click)="getPost(card.type, card.slug, card.original)">
+        
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-2 h-72 flex flex-col">
           <div class="h-40 overflow-hidden">
-            <img [src]="card.image" class="w-full h-full  ">
+            <img [src]="card.image" class="w-full h-full object-cover">
           </div>
-      
-          <!-- Title area: scroll if too long -->
           <div class="p-2 text-center font-semibold flex-grow overflow-y-auto scrollbar-hide">
             {{ card.title }}
           </div>
-      
         </div>
-      </div>
-   
+
       </div>
     </div>
-  
-    <!-- Right Button -->
-    <button (click)="nextSlide()" class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
-      &#10095;
-    </button>
   </div>
-  
+
+  <button (click)="nextSlide()" class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
+    &#10095;
+  </button>
+</div>

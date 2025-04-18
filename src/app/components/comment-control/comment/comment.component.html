@@ -33,12 +33,8 @@
       <footer class="flex justify-between items-center mb-2">
         <div class="flex items-center">
           <p class="inline-flex items-center mr-3 text-sm text-black font-semibold">
-            <img
-              class="mr-2 w-6 h-6 rounded-full"
-              src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
-              alt="User"
-            />
-            {{ getParsedUser(comment.data)?.username || 'Guest User' }}
+            <i class="fa-solid fa-user text-sm mr-2"></i>         
+               {{ getParsedUser(comment.data)?.username || 'Guest User' }}
           </p>
           <p class="text-sm text-gray-600">
             <time>{{ comment.created_at | date: 'mediumDate' }}</time>

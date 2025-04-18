@@ -17,7 +17,7 @@ export class MoreNewsComponent implements OnInit {
 
   constructor(
     private readonly httpArticle: ArticleService,
-    route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
@@ -52,16 +52,19 @@ export class MoreNewsComponent implements OnInit {
     });
   }
 
-
-
   getPost(type: string, slug: string, article: any) {
-    const routePath = type === 'video' ? 'video-news' : 'article';
-  
-    // First navigate to dummy route (like current + '?refresh=true'), then to actual
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([routePath, type, slug], {
-        state: { articleData: article }
-      });
+    localStorage.removeItem('selectedArticle');
+
+    this.httpArticle.getsinglepost(type, slug).subscribe(result => {
+      this.httpArticle.setSelectedArticle(article);
+      localStorage.setItem('selectedArticle', JSON.stringify(article));
+
+      const routePath = type === 'video' ? 'video-news' : 'article';
+
+      // Force component reload using Angular route strategy
+      this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+      this.router.onSameUrlNavigation = 'reload';
+      this.router.navigate([routePath, type, slug]);
     });
   }
 
@@ -84,6 +87,4 @@ export class MoreNewsComponent implements OnInit {
   private getRelativeTime(date: string): string {
     return formatDistanceToNowStrict(parseISO(date));
   }
-
- 
 }

@@ -24,16 +24,22 @@ export class CommentComponent implements OnInit {
   getCommentByPost(): void {
     this.commentService.getComments().subscribe(
       response => {
-        this.comments = response ?? [];
-
-        // Log if match found
+        // Ensure comments is always an array
+        if (Array.isArray(response)) {
+          this.comments = response;
+        } else {
+          this.comments = []; // fallback if it's not array
+          console.warn('Unexpected response:', response);
+        }
+  
+        // Check matching usernames
         this.comments.forEach(comment => {
           const user = this.getParsedUser(comment.data);
           if (user?.username === this.localUsername) {
             console.log('username match');
           }
         });
-
+  
         this.sortComments();
       },
       error => {
@@ -41,6 +47,7 @@ export class CommentComponent implements OnInit {
       }
     );
   }
+  
 
   getParsedUser(data: string): any {
     try {

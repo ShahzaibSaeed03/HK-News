@@ -10,30 +10,34 @@
 <div class="buttons w-full sm:w-[30%] flex justify-between  items-center bg-gray-100 sm:bg-transparent p-2 sm:p-0 rounded-lg text-lg">
     <div class="like-dislike gap-10 flex">
 
-   <!-- Inside like button span -->
-   <span class="flex items-center gap-1 cursor-pointer relative like-dislike" >
-    <!-- ✅ Show selected reaction icon if available -->
-    <ng-container *ngIf="selectedReactionIcon; else defaultIcon">
-      <img [src]="selectedReactionIcon" alt="Reaction" width="25" height="25" />
-    </ng-container>
-    <ng-template #defaultIcon>
-      <i class="{{ liked ? 'fa-solid fa-thumbs-up' : 'fa-regular fa-thumbs-up' }}"></i>
-    </ng-template>
+<!-- Inside like button span -->
+<span class="flex items-center gap-1 cursor-pointer relative like-dislike" *ngIf="likeData">
   
-    {{ likeCount }}
-  
-    <!-- 👇 Reactions shown after click -->
-   
-  </span>
+  <!-- ✅ Show selected reaction icon if available -->
+<ng-container *ngIf="selectedReactionIcon; else defaultIcon">
+  <img [src]="selectedReactionIcon" alt="Reaction" width="25" height="25" />
+</ng-container>
+
+<!-- ❌ If no selected icon, show default icon -->
+<ng-template #defaultIcon>
+  <i class="fa-regular fa-thumbs-up"></i>
+</ng-template>
+
+
+  <!-- ✅ Total Reactions -->
+  <span>{{ likeData.total_reactions }}</span>
+
+</span>
+
   
   
   
           
 
 
-    <span class="flex items-center gap-1 cursor-pointer" (click)="toggleDislike()">
+    <!-- <span class="flex items-center gap-1 cursor-pointer" (click)="toggleDislike()">
         <i class="{{ disliked ? 'fa-solid fa-thumbs-down' : 'fa-regular fa-thumbs-down' }}"></i> 
-    </span>
+    </span> -->
 
     <span class="share-btn cursor-pointer flex items-center gap-1  " (click)="togglePopup()">
         <i class="fa-solid fa-share-nodes"></i> Share

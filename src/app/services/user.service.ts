@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
   private apiUrl = 'https://new.hardknocknews.tv/api/user/details';
+  private apiUrls = 'https://new.hardknocknews.tv/api/user';
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +16,6 @@ export class UserService {
   }
     // Method to update the user profile
     updateUserProfile(userId: number, userData: any): Observable<any> {
-      return this.http.post<any>(`${this.apiUrl}/user/update/${userId}`, userData);
+      return this.http.put<any>(`${this.apiUrls}/${userId}`, userData);
     }
 }

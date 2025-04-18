@@ -3,7 +3,7 @@
     <div class="w-full md:w-[70%] p-1">
         <h1 class="text-3xl md:text-[40px] font-[700] md:font-[700] text-black leading-tight">
             {{article.title}}    </h1>
-        <img *ngIf="thumbUrl" [src]="thumbUrl" alt="Article Thumbnail" alt="News Image" class="w-full  mt-4 object-fill rounded-lg ">
+        <img *ngIf="thumbUrl" [src]="thumbUrl" alt="Article Thumbnail" alt="News Image" class=" rounded-lg ">
         <div class="mt-2  gap-2 text-gray-400 text-md">
             <div class="">By: <span class="text-black font-semibold">{{article.author}}</span> </div>
             <div>Published: {{ article.spdate }}</div>
@@ -27,9 +27,11 @@
 
               <div *ngFor="let entry of article.entries">
                 <!-- Check if the entry has an image -->
-                <!-- <div *ngIf="entry.type === 'image' && entry.image">
-                  <img [src]="setImageUrl(entry.image)" alt="Extra Image" class="w-full mt-4 rounded-lg" />
-                </div> -->
+                <div *ngIf="entry.type === 'image' && entry.image">
+                  <img [src]="setImageUrl(entry.image)" class="w-full mt-4 rounded-lg" />
+                </div>
+
+                
               
                 <!-- Check if the entry has a video -->
                 <div *ngIf="entry.type === 'video' && entry.video">
@@ -38,13 +40,18 @@
                     Your browser does not support the video tag.
                   </video>
                 </div>
-              
+                <!-- <div *ngIf="entry.type === 'image' && entry.image">
+                  <img [src]="setImageUrl(entry.image)"  />
+                </div> -->
                 <!-- Check if the entry has body text -->
                 <div *ngIf="entry.type === 'text' && entry.body" class="mt-4">
                   <div [innerHTML]="entry.body"></div>
                 </div>
               </div>
               
+             <!-- Loop through extra images and display them -->
+
+
               
               
 <div class="tags" *ngIf="tags && tags.length > 0">

@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
   selector: 'app-my-profile',
   templateUrl: './my-profile.component.html',
   styleUrls: ['./my-profile.component.css'],
-  imports: [CommonModule, RouterLink]
+  imports: [CommonModule]
 })
 export class MyProfileComponent implements OnInit {
   user: any;
