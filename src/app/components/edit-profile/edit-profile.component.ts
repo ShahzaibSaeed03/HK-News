@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class EditProfileComponent implements OnInit {
   @Input() user: any;
   updatedUser: any = {};
+  showSuccess: boolean = false; // ✅ For showing popup
 
   constructor(
     private userService: UserService,
@@ -24,25 +25,20 @@ export class EditProfileComponent implements OnInit {
     const storedUser = localStorage.getItem('editUser');
     if (storedUser) {
       this.updatedUser = JSON.parse(storedUser);
-      console.log('Loaded user from localStorage:', this.updatedUser);
     } else {
-      console.warn('No user data found in localStorage');
       this.router.navigate(['/my-profile']);
     }
   }
 
   updateProfile(): void {
-    const userId = this.updatedUser?.id || 1; // Use actual ID if stored
-    console.log('Submitting updated profile for user ID:', userId);
-    console.log('Updated user data:', this.updatedUser);
-
+    const userId = this.updatedUser?.id || 1;
     this.userService.updateUserProfile(userId, this.updatedUser).subscribe({
       next: (res: any) => {
         if (res.success) {
-          console.log('Profile update successful:', res);
-          this.router.navigate(['/my-profile']);
-        } else {
-          console.error('Profile update failed:', res.message);
+          this.showSuccess = true; // ✅ Show popup
+          setTimeout(() => {
+            this.router.navigate(['/my-profile']); // ✅ Navigate after 2 sec
+          }, 2000);
         }
       },
       error: (err) => {
@@ -51,3 +47,4 @@ export class EditProfileComponent implements OnInit {
     });
   }
 }
+

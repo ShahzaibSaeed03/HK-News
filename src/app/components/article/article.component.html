@@ -11,8 +11,8 @@
 
         </div>
         <div class="flex gap-5 text-2xl mt-2 text-black ">
-            <span><i class="fa-solid fa-envelope"></i></span>
-            <span><i class="fa-solid fa-comment"></i></span>
+            <span (click)="shareOn('email')"><i class="fa-solid fa-envelope"></i></span>
+            <span (click)="shareOn('text')"><i class="fa-solid fa-comment-dots"></i></span>
             <span class="share-btn cursor-pointer" (click)="togglePopup()">
                 <i class="fa-solid fa-share-nodes"></i>
             </span>        </div>
@@ -78,130 +78,138 @@
 </div>
 
 
-<div *ngIf="showPopup" class="fixed inset-0 bg-black opacity-50 z-40"></div>
+
 
 <!-- Popup (Shows only when showPopup is true) -->
-<div *ngIf="showPopup" class="popup-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-lg p-4  w-80 text-center z-50">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-3">
-        <h2 class="text-sm font-medium">Share with</h2>
-        <button (click)="togglePopup()" class="text-gray-600 hover:text-gray-800">
-            <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-    </div>
+<!-- Overlay -->
+<div *ngIf="linkCopied" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+  <p class="text-sm">Link Copied!</p>
+</div>
 
-    <!-- Icons Section -->
+<!-- Popup Container -->
+<div *ngIf="showPopup" class="popup-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-lg p-4 w-80 text-center z-50">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-sm font-medium">Share with</h2>
+    <button (click)="togglePopup()" class="text-gray-600 hover:text-gray-800">
+      <i class="fa-solid fa-xmark text-lg"></i>
+    </button>
+  </div>
+
+  <!-- Icons Section -->
   <div class="flex flex-wrap justify-around items-center gap-y-4">
+
     <!-- WhatsApp -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('whatsapp')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-whatsapp text-2xl text-green-600"></i>
       </div>
       <p class="mt-1 text-xs">WhatsApp</p>
     </div>
-  
+
     <!-- Facebook -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('facebook')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-facebook-f text-2xl text-blue-600"></i>
       </div>
       <p class="mt-1 text-xs">Facebook</p>
     </div>
-  
+
     <!-- Twitter -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('twitter')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-x-twitter text-2xl text-black"></i>
       </div>
       <p class="mt-1 text-xs">Twitter</p>
     </div>
-  
+
     <!-- LinkedIn -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('linkedin')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-linkedin-in text-2xl text-blue-700"></i>
       </div>
       <p class="mt-1 text-xs">LinkedIn</p>
     </div>
-  
+
     <!-- Instagram -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('instagram')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-instagram text-2xl text-pink-500"></i>
       </div>
       <p class="mt-1 text-xs">Instagram</p>
     </div>
-  
+
     <!-- YouTube -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('youtube')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-youtube text-2xl text-red-600"></i>
       </div>
       <p class="mt-1 text-xs">YouTube</p>
     </div>
-  
+
     <!-- Pinterest -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('pinterest')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-pinterest text-2xl text-red-500"></i>
       </div>
       <p class="mt-1 text-xs">Pinterest</p>
     </div>
-  
+
     <!-- Snapchat -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('snapchat')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-snapchat-ghost text-2xl text-yellow-400"></i>
       </div>
       <p class="mt-1 text-xs">Snapchat</p>
     </div>
-  
+
     <!-- Tumblr -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('tumblr')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-tumblr text-2xl text-blue-900"></i>
       </div>
       <p class="mt-1 text-xs">Tumblr</p>
     </div>
-  
+
     <!-- Telegram -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('telegram')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-telegram text-2xl text-sky-500"></i>
       </div>
       <p class="mt-1 text-xs">Telegram</p>
     </div>
-  
+
     <!-- Reddit -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('reddit')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-brands fa-reddit-alien text-2xl text-orange-600"></i>
       </div>
       <p class="mt-1 text-xs">Reddit</p>
     </div>
-  
+
     <!-- Text -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('text')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-regular fa-comment-dots text-2xl text-gray-600"></i>
       </div>
       <p class="mt-1 text-xs">Text</p>
     </div>
-  
+
     <!-- Email -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('email')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-regular fa-envelope text-2xl text-blue-400"></i>
       </div>
       <p class="mt-1 text-xs">Email</p>
     </div>
-  
+
     <!-- Link -->
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center cursor-pointer" (click)="shareOn('link')">
       <div class="w-12 h-12 flex justify-center items-center bg-gray-200 rounded-full">
         <i class="fa-solid fa-link text-2xl text-gray-600"></i>
       </div>
       <p class="mt-1 text-xs">Link</p>
     </div>
+
   </div>
 </div>

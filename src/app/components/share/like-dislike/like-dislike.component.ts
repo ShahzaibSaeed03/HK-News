@@ -21,6 +21,8 @@ export class LikeDislikeComponent implements OnInit {
   likeCount = 0;
   likeData: any;
   showReactions = true;
+  linkCopied: boolean = false;
+
 
 
   constructor(
@@ -130,5 +132,74 @@ export class LikeDislikeComponent implements OnInit {
 
   closePopups() {
     this.showLoginPopup = false;
+  }
+  shareOn(platform: string): void {
+    const url = encodeURIComponent(window.location.href);
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${url}`;
+        break;
+      case 'telegram':
+        shareUrl = `https://t.me/share/url?url=${url}`;
+        break;
+      case 'reddit':
+        shareUrl = `https://www.reddit.com/submit?url=${url}`;
+        break;
+      case 'pinterest':
+        shareUrl = `https://pinterest.com/pin/create/button/?url=${url}`;
+        break;
+      case 'email':
+        shareUrl = `mailto:?subject=Check this out&body=${url}`;
+        break;
+      case 'text':
+        shareUrl = `sms:?body=${url}`;
+        break;
+      case 'link':
+        // Copy the URL to the clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          this.linkCopied = true;
+          this.showPopup=false
+          // Hide the "Link Copied!" message after 1 second
+          setTimeout(() => {
+            this.linkCopied = false;
+          }, 1000);
+        }).catch(err => {
+          console.error('Error copying text: ', err);
+        });
+        return; // Exit the function after copying the link
+      case 'instagram':
+        shareUrl = `https://www.instagram.com/?url=${url}`; // Note: Instagram does not have a direct sharing URL API
+        break;
+      case 'youtube':
+        shareUrl = `https://www.youtube.com/share?url=${url}`; // Note: YouTube also lacks a direct sharing URL API
+        break;
+      case 'snapchat':
+        shareUrl = `https://www.snapchat.com/scan?attachmentUrl=${url}`; // Example URL for Snapchat share
+        break;
+      case 'tumblr':
+        shareUrl = `https://www.tumblr.com/share/link?url=${url}`;
+        break;
+      default:
+        alert('Sharing not supported for this platform.');
+        return;
+    }
+
+    // Open the share URL in a new tab
+    window.open(shareUrl, '_blank');
+
+    // Close the "Link Copied!" popup after sharing
+    this.linkCopied = false;
+    this.showPopup = false;
   }
 }
