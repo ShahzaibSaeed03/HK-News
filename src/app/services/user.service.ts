@@ -11,11 +11,18 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getUserDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  // Get userId from localStorage
+  private getUserId(): number {
+    return Number(localStorage.getItem('userId'));
   }
-    // Method to update the user profile
-    updateUserProfile(userId: number, userData: any): Observable<any> {
-      return this.http.put<any>(`${this.apiUrls}/${userId}`, userData);
-    }
+
+  getUserDetails(): Observable<any> {
+    const userId = this.getUserId();
+    return this.http.get(`${this.apiUrl}/${userId}`);
+  }
+
+  updateUserProfile(userData: any): Observable<any> {
+    const userId = this.getUserId();
+    return this.http.put<any>(`${this.apiUrls}/${userId}`, userData);
+  }
 }

@@ -12,6 +12,11 @@ import { FormsModule, NgForm } from '@angular/forms';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+
+
+  showRegisterSuccess: boolean = false;
+
+
   user = {
     username: '',
     email: '',
@@ -43,35 +48,44 @@ export class RegisterComponent {
   // }
 
   registerUser(form: NgForm) {
-    if (form.invalid) {
-      alert('Please fill out all required fields correctly.');
-      return;
-    }
-  
-    const requestData = this.user;
-  
-    console.log('Sending data:', requestData);
-  
-    this.httpRequestService.register(requestData).subscribe({
-      next: (response) => {
-        console.log('Registration successful', response);
-        alert('User registered successfully!');
-        form.resetForm();
-      },
-      error: (error) => {
-        console.error('Error during registration', error);
-  
-        if (error.status === 422 && error.error.errors) {
-          const messages = Object.entries(error.error.errors)
-            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
-            .join('\n');
-          alert('Validation errors:\n' + messages);
-        } else {
-          alert(error.error.message || 'Registration failed!');
-        }
-      }
-    });
+  if (form.invalid) {
+    alert('Please fill out all required fields correctly.');
+    return;
   }
+
+  const requestData = this.user;
+  console.log('Sending data:', requestData);
+
+  this.httpRequestService.register(requestData).subscribe({
+    next: (response) => {
+      console.log('Registration successful', response);
+
+      // ✅ Show bottom success message
+      this.showRegisterSuccess = true;
+
+      // ✅ Reset form after success
+      form.resetForm();
+
+      // ✅ Optional: Auto-hide message after 3 sec
+      setTimeout(() => {
+        this.showRegisterSuccess = false;
+      }, 3000);
+    },
+    error: (error) => {
+      console.error('Error during registration', error);
+
+      if (error.status === 422 && error.error.errors) {
+        const messages = Object.entries(error.error.errors)
+          .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
+          .join('\n');
+        alert('Validation errors:\n' + messages);
+      } else {
+        alert(error.error.message || 'Registration failed!');
+      }
+    }
+  });
+}
+
   
   
 }

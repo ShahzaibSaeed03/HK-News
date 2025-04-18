@@ -17,30 +17,32 @@ export class LoginComponent {
     password: ''
   };
 
+  showLoginSuccess: boolean = false;
+
   constructor(private httpRequestService: HttpRequestService, private router: Router) {}
 
   loginUser(form: NgForm) {
     if (form.invalid) {
       return;
     }
-  
+
     this.httpRequestService.login(this.user).subscribe(
       (response: any) => {
         console.log('Login successful', response);
-        alert('Login successful!');
-  
-        // Store token in localStorage
+
+        // Show success message
+        this.showLoginSuccess = true;
+
+        // Store token and user info
         localStorage.setItem('authToken', response.token);
-  
-        // Store user ID in localStorage
         localStorage.setItem('userId', response.user.id.toString());
         localStorage.setItem('user_username', response.user.username);
         localStorage.setItem('user_email', response.user.email);
 
-
-  
-        // Navigate to the home page after login
-        this.router.navigate(['/home']);
+        // Redirect after delay
+        setTimeout(() => {
+          this.router.navigate(['/home']);
+        }, 2000);
       },
       error => {
         console.error('Error during login', error);
@@ -48,5 +50,5 @@ export class LoginComponent {
       }
     );
   }
-  
 }
+

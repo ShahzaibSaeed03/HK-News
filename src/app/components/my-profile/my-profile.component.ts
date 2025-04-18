@@ -7,6 +7,7 @@ import { Router, RouterLink } from '@angular/router';
   selector: 'app-my-profile',
   templateUrl: './my-profile.component.html',
   styleUrls: ['./my-profile.component.css'],
+  standalone: true,
   imports: [CommonModule]
 })
 export class MyProfileComponent implements OnInit {
@@ -22,20 +23,17 @@ export class MyProfileComponent implements OnInit {
       return;
     }
 
-    const userId = 1; // Replace with dynamic ID if available
-    this.userService.getUserDetails(userId).subscribe((res) => {
+    this.userService.getUserDetails().subscribe((res) => {
       if (res.success) {
         this.user = res.user;
       }
     });
   }
 
-
   editProfile(): void {
     localStorage.setItem('editUser', JSON.stringify(this.user));
     this.router.navigate(['/edit-profile']);
   }
-  
 
   logout(): void {
     localStorage.removeItem('authToken');

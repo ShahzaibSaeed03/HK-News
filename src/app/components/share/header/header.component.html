@@ -72,7 +72,7 @@
       </li>
 
       <li>
-        <a routerLink="/home" class="w-full text-left flex justify-between items-center">Home</a>
+        <a routerLink="/home" (click)="onMobileLinkClick()" class="w-full text-left flex justify-between items-center">Home</a>
       </li>
 
       <!-- Mobile News Dropdown -->
@@ -83,11 +83,12 @@
           <span *ngIf="isMobileDropdownOpen">−</span>
         </button>
         <ul *ngIf="isMobileDropdownOpen" class="pl-4 z-50 border-0.5 border-white">
-          <li><a routerLink="/celebirty-news" class="block py-2">Celebrity</a></li>
-          <li><a routerLink="/entertainment-news" class="block py-2">Entertainment</a></li>
-          <li><a routerLink="/politics-news" class="block py-2">Politics</a></li>
-          <li><a routerLink="/crime-news" class="block py-2">Crime</a></li>
-          <li><a routerLink="/business-news" class="block py-2">Business</a></li>
+          <li><a routerLink="/celebirty-news" (click)="onMobileLinkClick()" class="block py-2">Celebrity</a></li>
+          <li><a routerLink="/entertainment-news" (click)="onMobileLinkClick()" class="block py-2">Entertainment</a></li>
+          <li><a routerLink="/politics-news" (click)="onMobileLinkClick()" class="block py-2">Politics</a></li>
+          <li><a routerLink="/crime-news" (click)="onMobileLinkClick()" class="block py-2">Crime</a></li>
+          <li><a routerLink="/business-news" (click)="onMobileLinkClick()" class="block py-2">Business</a></li>
+          
         </ul>
       </li>
     </ul>

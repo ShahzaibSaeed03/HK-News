@@ -29,15 +29,17 @@ export class EditProfileComponent implements OnInit {
       this.router.navigate(['/my-profile']);
     }
   }
-
   updateProfile(): void {
-    const userId = this.updatedUser?.id || 1;
-    this.userService.updateUserProfile(userId, this.updatedUser).subscribe({
+    this.userService.updateUserProfile(this.updatedUser).subscribe({
       next: (res: any) => {
-        if (res.success) {
-          this.showSuccess = true; // ✅ Show popup
+        console.log('Update Response:', res); // 👈 log to debug
+  
+        if (res?.success) {
+          this.showSuccess = true;
+  
           setTimeout(() => {
-            this.router.navigate(['/my-profile']); // ✅ Navigate after 2 sec
+            this.showSuccess = false; // 👈 hide popup after some time
+            this.router.navigate(['/my-profile']);
           }, 2000);
         }
       },
@@ -46,5 +48,6 @@ export class EditProfileComponent implements OnInit {
       }
     });
   }
+  
 }
 

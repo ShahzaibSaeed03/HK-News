@@ -23,6 +23,11 @@ export class HeaderComponent {
   toggleMobileDropdown() {
     this.isMobileDropdownOpen = !this.isMobileDropdownOpen;
   }
+  onMobileLinkClick(): void {
+    this.isMenuOpen = false;
+    this.isMobileDropdownOpen = false;
+  }
+  
 
   goToProfileOrLogin() {
     const token = localStorage.getItem('authToken');
